@@ -5,7 +5,9 @@ import SplashGif from '../assets/splash.gif';
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Image source={SplashGif} style={styles.image} />
+      <Image source={SplashGif}
+    //    style={styles.gif} 
+       />
     </View>
   );
 };
@@ -17,9 +19,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  image: {
-    width: 150,
-    height: 150,
+  gif: {
+    width: "auto",
+    height: "auto",
   },
 });
 
