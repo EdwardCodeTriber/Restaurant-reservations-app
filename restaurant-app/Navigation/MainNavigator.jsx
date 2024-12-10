@@ -31,6 +31,7 @@ export default function MainNavigator() {
           },
           tabBarActiveTintColor: "green",
           tabBarInactiveTintColor: "gray",
+          headerShown: false,
         })}
       >
         <Tab.Screen
@@ -44,10 +45,10 @@ export default function MainNavigator() {
         />
         <Tab.Screen
           name="Map"
-          component={HomeScreen}
+          component={MapScreen}
           options={{
             tabBar: ({ focused }) => (
-              <BottomNavigation navigation={navigation} currentScreen="Home" />
+              <BottomNavigation navigation={navigation} currentScreen="Map" />
             ),
           }}
         />
@@ -62,10 +63,10 @@ export default function MainNavigator() {
         />
         <Tab.Screen
           name="Profile"
-          component={HomeScreen}
+          component={ProfileScreen}
           options={{
             tabBar: ({ focused }) => (
-              <BottomNavigation navigation={navigation} currentScreen="Home" />
+              <BottomNavigation navigation={navigation} currentScreen="Profile" />
             ),
           }}
         />
