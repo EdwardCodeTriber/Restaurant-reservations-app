@@ -75,6 +75,37 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Restaurant schema
+const restaurantSchema = new mongoose.Schema({
+  name: String,
+  address: String,
+  phone: String,
+  cuisine: String,
+  rating: Number,
+  pricePerReservation: Number,
+  dressCode: String,
+  description: String,
+  menu: [
+    {
+      name: String,
+      image: String,
+    },
+  ],
+  images: [String],
+});
+
+const Restaurant = mongoose.model('Restaurant', restaurantSchema);
+
+// API endpoint to get all restaurants
+app.get('/restaurants', async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+    res.json(restaurants);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch restaurants' });
+  }
+});
+
 // Routes
 
 // Update the signup route to match the user schema
