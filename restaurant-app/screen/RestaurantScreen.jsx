@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import axios from 'axios';
 
 export default function RestaurantScreen() {
   const [restaurants, setRestaurants] = useState([]);
@@ -10,9 +11,8 @@ export default function RestaurantScreen() {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch('http://192.168.18.15:/restaurants'); //
-      const data = await response.json();
-      setRestaurants(data);
+      const response = await axios.get('http://localhost:3000/restaurants');
+      setRestaurants(response.data);
     } catch (error) {
       console.error('Error fetching restaurants:', error);
     }

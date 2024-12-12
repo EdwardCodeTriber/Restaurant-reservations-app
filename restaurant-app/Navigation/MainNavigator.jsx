@@ -6,6 +6,7 @@ import HomeScreen from "../screen/HomeScreen";
 import MapScreen from "../screen/MapScreen";
 import FavouritesScreen from "../screen/FavouritesScreen";
 import ProfileScreen from "../screen/ProfileScreen";
+import RestaurantScreen from "../screen/RestaurantScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +26,8 @@ export default function MainNavigator() {
               iconName = focused ? "heart" : "heart-outline";
             } else if (route.name === "Profile") {
               iconName = focused ? "person" : "person-outline";
+            } else if (route.name === "Restaurant") {
+              iconName = focused ? "restaurant" : "restaurant-outline";
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -67,6 +70,15 @@ export default function MainNavigator() {
           options={{
             tabBar: ({ focused }) => (
               <BottomNavigation navigation={navigation} currentScreen="Profile" />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Restaurant"
+          component={RestaurantScreen}
+          options={{
+            tabBar: ({ focused }) => (
+              <BottomNavigation navigation={navigation} currentScreen="Restaurant" />
             ),
           }}
         />

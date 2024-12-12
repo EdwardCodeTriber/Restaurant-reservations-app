@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'exp://192.168.18.15:8081', // Expo Metro Bundler URL
+    origin: ['exp://192.168.1.48:8081', 'http://localhost:3000'], // Expo Metro Bundler URL
     credentials: true,
   })
 );
@@ -214,4 +214,4 @@ app.get('/me', async (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => console.log(`Server running on http://192.168.18.15:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
