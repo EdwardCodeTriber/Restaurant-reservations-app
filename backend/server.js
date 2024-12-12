@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['exp://192.168.1.48:8081', 'http://localhost:3000'], // Expo Metro Bundler URL
+    origin: ['exp://192.168.1.48:8081', 'http:// 192.168.1.48:3000'], 
     credentials: true,
   })
 );

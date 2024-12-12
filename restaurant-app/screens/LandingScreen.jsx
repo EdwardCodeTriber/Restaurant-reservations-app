@@ -109,6 +109,7 @@ export default function LandingScreen({ navigation }) {
         />
       )}
     </View>
+    
   );
 }
 

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const restaurants = [
@@ -32,7 +33,8 @@ const restaurants = [
 
 export default function FavouritesScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View >
       <TextInput
         style={styles.searchInput}
         placeholder="Search your favourites here"
@@ -58,6 +60,8 @@ export default function FavouritesScreen() {
         )}
       />
     </View>
+    </SafeAreaView>
+    
   );
 }
 

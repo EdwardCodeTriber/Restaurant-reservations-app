@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View >
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image
@@ -29,6 +31,8 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaView>
+    
   );
 }
 

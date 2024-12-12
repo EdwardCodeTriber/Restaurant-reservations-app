@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function RestaurantScreen() {
   const [restaurants, setRestaurants] = useState([]);
 
@@ -11,7 +11,7 @@ export default function RestaurantScreen() {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/restaurants');
+      const response = await axios.get('http://192.168.1.48:3000/restaurants');
       setRestaurants(response.data);
     } catch (error) {
       console.error('Error fetching restaurants:', error);
@@ -21,7 +21,7 @@ export default function RestaurantScreen() {
   const renderRestaurant = ({ item }) => (
     <TouchableOpacity style={styles.card}>
       <Image
-        source={{ uri: item.images[0] || 'https://via.placeholder.com/150' }}
+        source={{ uri: `http://192.168.1.48:3000/${item.images[0]}` }}
         style={styles.image}
       />
       <View style={styles.details}>
@@ -33,7 +33,8 @@ export default function RestaurantScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View >
       <Text style={styles.title}>Restaurants Nearby</Text>
       <FlatList
         data={restaurants}
@@ -41,6 +42,8 @@ export default function RestaurantScreen() {
         renderItem={renderRestaurant}
       />
     </View>
+    </SafeAreaView>
+    
   );
 }
 

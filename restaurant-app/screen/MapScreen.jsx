@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null);
@@ -45,7 +46,8 @@ export default function MapScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View >
       <MapView
         style={styles.map}
         initialRegion={location}
@@ -63,6 +65,8 @@ export default function MapScreen() {
         />
       </MapView>
     </View>
+    </SafeAreaView>
+    
   );
 }
 

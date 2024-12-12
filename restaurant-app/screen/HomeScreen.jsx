@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const restaurants = [
@@ -32,7 +33,8 @@ const restaurants = [
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View>
       <Text style={styles.greeting}>Hi, Guest</Text>
       <Text style={styles.date}>Thursday, Jan 22 - today</Text>
       <TextInput
@@ -60,6 +62,8 @@ export default function HomeScreen() {
         )}
       />
     </View>
+    </SafeAreaView>
+    
   );
 }
 
