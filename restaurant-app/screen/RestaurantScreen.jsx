@@ -38,7 +38,7 @@ export default function RestaurantScreen() {
       <Text style={styles.title}>Restaurants Nearby</Text>
       <FlatList
         data={restaurants}
-        keyExtractor={(item) => item._id} // Assuming MongoDB ObjectId as key
+        keyExtractor={(item) => item._id} // MongoDB ObjectId as key
         renderItem={renderRestaurant}
       />
     </View>

@@ -7,6 +7,7 @@ import MapScreen from "../screen/MapScreen";
 import FavouritesScreen from "../screen/FavouritesScreen";
 import ProfileScreen from "../screen/ProfileScreen";
 import RestaurantScreen from "../screen/RestaurantScreen";
+import BookingTableScreen from "../screen/BookingScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -81,6 +82,15 @@ export default function MainNavigator() {
           options={{
             tabBar: ({ focused }) => (
               <BottomNavigation navigation={navigation} currentScreen="Restaurant" />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Booking"
+          component={BookingTableScreen}
+          options={{
+            tabBar: ({ focused }) => (
+              <BottomNavigation navigation={navigation} currentScreen="Booking" />
             ),
           }}
         />
