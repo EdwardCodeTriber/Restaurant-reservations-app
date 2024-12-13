@@ -37,7 +37,7 @@ export default function MainNavigator() {
           tabBarInactiveTintColor: "gray",
           // tabBarBackground: "blue",
           headerShown: false,
-          headerBackground: "#40C3DB",
+          
         })}
       >
         <Tab.Screen
