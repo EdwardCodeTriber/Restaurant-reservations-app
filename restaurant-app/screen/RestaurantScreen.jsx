@@ -11,7 +11,7 @@ export default function RestaurantScreen() {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await axios.get('http://192.168.0.104:3000/restaurants');
+      const response = await axios.get('http://192.168.18.15:3000/restaurants');
       setRestaurants(response.data);
     } catch (error) {
       console.error('Error fetching restaurants:', error);
@@ -21,7 +21,7 @@ export default function RestaurantScreen() {
   const renderRestaurant = ({ item }) => (
     <TouchableOpacity style={styles.card}>
       <Image
-        source={{ uri: `http://192.168.1.48:3000/${item.images[0]}` }}
+        source={{ uri: `http://192.168.18.15:3000/${item.images[0]}` }}
         style={styles.image}
       />
       <View style={styles.details}>
