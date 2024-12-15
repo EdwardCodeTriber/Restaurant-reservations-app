@@ -36,7 +36,7 @@ const BookingTableScreen = () => {
 
       <Text style={styles.label}>Party size</Text>
       <View style={styles.partySizeContainer}>
-        {[1, 2, 4, 5].map((size) => (
+        {[1, 2, 4, 5, 6, 7, 8, 9].map((size) => (
           <TouchableOpacity
             key={size}
             style={[

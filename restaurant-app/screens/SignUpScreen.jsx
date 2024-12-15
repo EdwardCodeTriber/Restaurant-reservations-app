@@ -66,7 +66,7 @@ export default function SignUpScreen({ navigation }) {
     }
 
     axios
-      .post('http://192.168.18.15:3000/signup', { 
+      .post('http://192.168.0.104:3000/signup', { 
         email, 
         password, 
         firstName, 

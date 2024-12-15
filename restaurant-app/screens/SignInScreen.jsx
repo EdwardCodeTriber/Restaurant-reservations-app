@@ -15,14 +15,14 @@ export default function SignInScreen({ navigation }) {
 
     axios
       .post(
-        'http://192.168.18.15:3000/signin',
+        'http://192.168.0.104:3000/signin',
         { email, password },
         { withCredentials: true }
       )
       .then((response) => {
         // Optional: You might want to store user info in context/state
         Alert.alert('Success', 'Logged in successfully');
-        navigation.navigate('Landing');
+        navigation.navigate('Home');
       })
       .catch((error) => {
         const errorMsg = error.response?.data?.message || 'Sign in failed';

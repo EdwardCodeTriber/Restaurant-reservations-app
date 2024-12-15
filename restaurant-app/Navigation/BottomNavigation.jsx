@@ -56,7 +56,7 @@ const BottomNavigation = ({ navigation, currentScreen }) => {
           onPress={() => navigation.navigate("Favourites")}
         >
           <Ionicons
-            name="heart"
+            name="Favourite"
             size={24}
             color={currentScreen === "Favourites" ? "green" : "gray"}
           />

@@ -8,6 +8,8 @@ import FavouritesScreen from "../screen/FavouritesScreen";
 import ProfileScreen from "../screen/ProfileScreen";
 import RestaurantScreen from "../screen/RestaurantScreen";
 import BookingTableScreen from "../screen/BookingScreen";
+import SignInScreen from "../screens/SignInScreen"
+import SignUpScreen from "../screens/SignUpScreen"
 
 const Tab = createBottomTabNavigator();
 
@@ -91,6 +93,24 @@ export default function MainNavigator() {
           options={{
             tabBar: ({ focused }) => (
               <BottomNavigation navigation={navigation} currentScreen="Booking" />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="SignIn"
+          component={SignInScreen}
+          options={{
+            tabBar: ({ focused }) => (
+              <BottomNavigation navigation={navigation} currentScreen="SignInScreen"/>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{
+            tabBar: ({ focused }) => (
+              <BottomNavigation navigation={navigation} currentScreen="SignUpScreen"/>
             ),
           }}
         />
