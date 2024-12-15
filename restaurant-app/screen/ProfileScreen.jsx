@@ -18,7 +18,7 @@ export default function ProfileScreen({ navigation }) {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`http://192.168.0.104:3000/me`, {
+        const response = await axios.get(`http://192.168.18.15:3000/me`, {
           withCredentials: true,
         });
         setUser(response.data.user);
@@ -38,7 +38,7 @@ export default function ProfileScreen({ navigation }) {
   // Handle Sign Out
   const handleSignOut = () => {
     axios
-      .post(`http://192.168.0.104:3000/signout`, {}, { withCredentials: true })
+      .post(`http://192.168.18.15:3000/signout`, {}, { withCredentials: true })
       .then(() => {
         setUser(null);
         Alert.alert("Success", "Signed out successfully");
