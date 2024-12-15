@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Reservation = require("../models/Reservation");
-// const { verifyUser } = require("../middleware/auth");
+
 
 // @route   POST /reservations
 // @desc    Create a reservation
