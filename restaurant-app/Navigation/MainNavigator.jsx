@@ -51,7 +51,7 @@ export default function MainNavigator() {
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Map"
           component={MapScreen}
           options={{
@@ -59,8 +59,8 @@ export default function MainNavigator() {
               <BottomNavigation navigation={navigation} currentScreen="Map" />
             ),
           }}
-        />
-        <Tab.Screen
+        /> */}
+        {/* <Tab.Screen
           name="Favorite"
           component={FavouritesScreen}
           options={{
@@ -68,7 +68,7 @@ export default function MainNavigator() {
               <BottomNavigation navigation={navigation} currentScreen="Favourites" />
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}
