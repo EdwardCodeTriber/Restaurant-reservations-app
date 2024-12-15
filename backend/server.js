@@ -6,7 +6,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const reservationsRoute = require("./routes/reservations");
+const Restaurant = require('./models/restaurant');
+// const reservationsRoute = require("./routes/reservations");
 
 const app = express();
 const PORT = 3000;
@@ -26,7 +27,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['exp://192.168.0.104:8082', 'http:// 192.168.0.104:3000'], 
+    origin: ['exp://192.168.18.15:8081', 'http://192.168.18.15:3000'], 
     credentials: true,
   })
 );
@@ -38,7 +39,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: 'mongodb+srv://sphllzulu:L5rv9SsjPLBeIqiY@cluster10.6e0kt.mongodb.net/' }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, 
   })
 );
 
@@ -76,36 +77,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// Restaurant schema
-const restaurantSchema = new mongoose.Schema({
-  name: String,
-  address: String,
-  phone: String,
-  cuisine: String,
-  rating: Number,
-  pricePerReservation: Number,
-  dressCode: String,
-  description: String,
-  menu: [
-    {
-      name: String,
-      image: String,
-    },
-  ],
-  images: [String],
-});
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
-
-// API endpoint to get all restaurants
-app.get('/restaurants', async (req, res) => {
-  try {
-    const restaurants = await Restaurant.find();
-    res.json(restaurants);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch restaurants' });
-  }
-});
 
 // Routes
 
@@ -214,7 +186,67 @@ app.get('/me', async (req, res) => {
   }
 });
 
-app.use("/reservations", reservationsRoute);
+//restaurant routes
+app.get('/restaurants', async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+    res.json(restaurants);
+  } catch (err) {
+    console.error('Error fetching restaurants:', err);
+    res.status(500).json({ error: 'Failed to fetch restaurants', details: err.message });
+  }
+});
+
+
+app.post('/restaurants/review', async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).send({ message: 'Not authenticated' });
+  }
+
+  try {
+    const { restaurantId, review } = req.body;
+    
+    // Find the user to get their name
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    // Find the restaurant
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).send({ message: 'Restaurant not found' });
+    }
+
+    // Create the review with user's full name
+    const newReview = {
+      user: `${user.firstName} ${user.lastName}`,
+      rating: review.rating,
+      comment: review.comment,
+      date: new Date()
+    };
+
+    // Add the review to the restaurant's reviews array
+    restaurant.reviews.push(newReview);
+
+    // Recalculate the restaurant's overall rating
+    const totalRating = restaurant.reviews.reduce((sum, rev) => sum + rev.rating, 0);
+    restaurant.rating = Number((totalRating / restaurant.reviews.length).toFixed(1));
+
+    // Save the updated restaurant
+    await restaurant.save();
+
+    res.status(201).send({ 
+      message: 'Review added successfully', 
+      restaurant 
+    });
+  } catch (error) {
+    console.error('Error adding review:', error);
+    res.status(500).send({ message: 'Error adding review', error: error.message });
+  }
+});
+
+// app.use("/reservations", reservationsRoute);
 
 // Start server
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://192.168.18.15:${PORT}`));
