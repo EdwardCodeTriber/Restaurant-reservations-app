@@ -6,6 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const reservationsRoute = require("./routes/reservations");
 
 const app = express();
 const PORT = 3000;
@@ -212,6 +213,8 @@ app.get('/me', async (req, res) => {
     res.status(500).send({ message: 'Error fetching user', error: error.message });
   }
 });
+
+app.use("/reservations", reservationsRoute);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
