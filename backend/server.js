@@ -7,6 +7,9 @@ const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const Restaurant = require('./models/restaurant');
+const Reservation = require("./models/Reservation");
+const User= require('./users')
+const Favorite= require('./models/Favorites')
 // const reservationsRoute = require("./routes/reservations");
 
 const app = express();
@@ -43,39 +46,7 @@ app.use(
   })
 );
 
-// User schema
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
-  role: {
-    type: String,
-    
-    default: 'USER'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
 
-const User = mongoose.model('User', userSchema);
 
 
 
@@ -174,6 +145,7 @@ app.get('/me', async (req, res) => {
     
     res.status(200).send({ 
       user: { 
+        _id: user._id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -246,7 +218,123 @@ app.post('/restaurants/review', async (req, res) => {
   }
 });
 
-// app.use("/reservations", reservationsRoute);
+app.post("/reservations", async (req, res) => {
+  const { userId, restaurantId, partySize, date, time } = req.body;
+
+  // Validate required fields
+  if (!userId || !restaurantId || !partySize || !date || !time) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    // Find the restaurant
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    // Convert the date to a JavaScript Date object
+    const reservationDate = new Date(date);
+    if (isNaN(reservationDate.getTime())) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    // Get the day of the week (e.g., "Monday", "Tuesday")
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayOfWeek = days[reservationDate.getDay()];
+
+    // Find the time slot
+    const timeSlot = restaurant.availableTimeSlots
+      .find((day) => day.day === dayOfWeek)
+      ?.slots.find((slot) => slot.time === time);
+
+    if (!timeSlot) {
+      return res.status(400).json({ error: "Time slot not found" });
+    }
+
+    // Check if the time slot has available reservations
+    if (timeSlot.currentReservations >= timeSlot.maxReservations) {
+      return res.status(400).json({ error: "No available slots for this time" });
+    }
+
+    // Create the reservation
+    const reservation = new Reservation({
+      userId,
+      restaurantId,
+      partySize,
+      date: reservationDate,
+      time,
+    });
+
+    // Save the reservation
+    await reservation.save();
+
+    // Update the current reservations count
+    timeSlot.currentReservations += 1;
+    await restaurant.save();
+
+    res.status(201).json({ message: "Reservation created successfully", reservation });
+  } catch (error) {
+    console.error("Error creating reservation:", error);
+    res.status(500).json({ error: "Failed to create reservation", details: error.message });
+  }
+});
+
+
+app.post("/favorites", async (req, res) => {
+  const { userId, restaurantId } = req.body;
+
+  try {
+    // Check if the favorite already exists
+    const existingFavorite = await Favorite.findOne({ userId, restaurantId });
+    if (existingFavorite) {
+      return res.status(400).json({ error: "Already in favorites" });
+    }
+
+    // Create a new favorite
+    const favorite = new Favorite({ userId, restaurantId });
+    await favorite.save();
+
+    // Fetch all favorites for the user
+    const favorites = await Favorite.find({ userId });
+
+    res.status(201).json({ message: "Added to favorites", favorites });
+  } catch (error) {
+    console.error("Error adding to favorites:", error);
+    res.status(500).json({ error: "Failed to add to favorites" });
+  }
+});
+
+//remove favorites
+app.delete("/favorites/:userId/:restaurantId", async (req, res) => {
+  const { userId, restaurantId } = req.params;
+
+  try {
+    // Remove the favorite
+    await Favorite.findOneAndDelete({ userId, restaurantId });
+
+    // Fetch all favorites for the user
+    const favorites = await Favorite.find({ userId });
+
+    res.status(200).json({ message: "Removed from favorites", favorites });
+  } catch (error) {
+    console.error("Error removing from favorites:", error);
+    res.status(500).json({ error: "Failed to remove from favorites" });
+  }
+});
+
+//get each user;s favorites
+app.get("/favorites/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const favorites = await Favorite.find({ userId }).populate("restaurantId");
+    res.status(200).json({ favorites });
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    res.status(500).json({ error: "Failed to fetch favorites" });
+  }
+});
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on http://192.168.18.15:${PORT}`));
