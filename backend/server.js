@@ -295,6 +295,44 @@ app.get("/reservations/:userId", async (req, res) => {
   }
 });
 
+// Delete a reservation
+
+// Delete a reservation
+app.delete("/reservations/:userId/:reservationId", async (req, res) => {
+  const { userId, reservationId } = req.params;
+
+  try {
+    const reservation = await Reservation.findOne({ _id: reservationId, userId });
+    if (!reservation) {
+      return res.status(404).json({ error: "Reservation not found" });
+    }
+
+    const restaurant = await Restaurant.findById(reservation.restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    const reservationDate = new Date(reservation.date);
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayOfWeek = days[reservationDate.getDay()];
+
+    const timeSlot = restaurant.availableTimeSlots
+      .find((day) => day.day === dayOfWeek)
+      ?.slots.find((slot) => slot.time === reservation.time);
+
+    if (timeSlot && timeSlot.currentReservations > 0) {
+      timeSlot.currentReservations -= 1;
+      await restaurant.save();
+    }
+
+    await Reservation.findByIdAndDelete(reservationId);
+
+    res.status(200).json({ message: "Reservation canceled successfully" });
+  } catch (error) {
+    console.error("Error canceling reservation:", error);
+    res.status(500).json({ error: "Failed to cancel reservation", details: error.message });
+  }
+});
 
 app.post("/favorites", async (req, res) => {
   const { userId, restaurantId } = req.body;
