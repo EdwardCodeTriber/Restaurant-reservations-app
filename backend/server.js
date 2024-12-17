@@ -10,11 +10,13 @@ const Restaurant = require('./models/restaurant');
 const Reservation = require("./models/Reservation");
 const User= require('./users')
 const Favorite= require('./models/Favorites')
+const Stripe = require("stripe");
+
 // const reservationsRoute = require("./routes/reservations");
 
 const app = express();
 const PORT = 3000;
-
+const stripe = Stripe("sk_test_51PuTr7LOTigiMrGczu7wNOo4HtbCev9JdmhAvD782LAq7Q3IGjZiNNrvFSeMt9Kbmj4hKxTbVbwWFh4QwFSzUClG008sV52fgY"); 
 // MongoDB connection
 mongoose.connect('mongodb+srv://sphllzulu:L5rv9SsjPLBeIqiY@cluster10.6e0kt.mongodb.net/', {
   useNewUrlParser: true,
@@ -280,6 +282,19 @@ app.post("/reservations", async (req, res) => {
   }
 });
 
+//get the reservations of the currently logged in user
+app.get("/reservations/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const reservations = await Reservation.find({ userId }).populate("restaurantId");
+    res.status(200).json({ reservations });
+  } catch (error) {
+    console.error("Error fetching reservations:", error);
+    res.status(500).json({ error: "Failed to fetch reservations" });
+  }
+});
+
 
 app.post("/favorites", async (req, res) => {
   const { userId, restaurantId } = req.body;
@@ -335,6 +350,31 @@ app.get("/favorites/:userId", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch favorites" });
   }
 });
+
+
+app.post("/create-payment-intent", async (req, res) => {
+  console.log("Received request to create payment intent");
+  console.log("Request body:", req.body);
+
+  const { amount, currency } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+      payment_method_types: ["card"],
+    });
+
+    console.log("Payment intent created:", paymentIntent.id);
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on http://192.168.18.15:${PORT}`));
