@@ -78,7 +78,7 @@ export default function MainNavigator() {
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Restaurant"
           component={RestaurantScreen}
           options={{
@@ -86,7 +86,7 @@ export default function MainNavigator() {
               <BottomNavigation navigation={navigation} currentScreen="Restaurant" />
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name="Booking"
           component={BookingTableScreen}
