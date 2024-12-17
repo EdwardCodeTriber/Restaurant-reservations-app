@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { StripeProvider } from '@stripe/stripe-react-native';
 // import AppNavigator from './navigation/AppNavigator';
 import MainNavigator from "./Navigation/MainNavigator"
 
@@ -42,7 +43,13 @@ export default function App() {
   // }
 
   return (
-    <MainNavigator/>
+    <StripeProvider
+      publishableKey="pk_test_51PuTr7LOTigiMrGc4kJLk7Qkg7DeJn4I7yopiOdsLpprbiw7QCTKvztnOZrREYH6YQ75ELZz15tblpYpGUvpP3AG00TB1uLG3e" // Replace with your Stripe publishable key
+      merchantIdentifier="merchant.com.{{ThaLele}}" // Optional, required for Apple Pay
+    >
+       <MainNavigator/>
+    </StripeProvider>
+   
   )
    
 }
