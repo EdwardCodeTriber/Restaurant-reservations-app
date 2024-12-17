@@ -2245,7 +2245,7 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.greeting}>
           Hi, {user ? `${user.firstName} ${user.lastName}` : "Guest"}
         </Text>
-        <Text style={styles.date}>Thursday, Jan 22 - today</Text>
+        <Text style={styles.date}><Date/></Text>
 
         <TextInput
           style={styles.searchInput}
