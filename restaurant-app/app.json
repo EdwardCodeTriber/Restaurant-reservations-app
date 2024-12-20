@@ -13,11 +13,26 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/Logo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "ldpi": "./assets/Logo.png",
+        "mdpi": "./assets/Logo.png",
+        "hdpi": "./assets/Logo.png",
+        "xhdpi": "./assets/Logo.png",
+        "xxhdpi": "./assets/Logo.png",
+        "xxxhdpi": "./assets/Logo.png",
+        "resizeMode": "contain",
         "backgroundColor": "#ffffff"
       }
     },
