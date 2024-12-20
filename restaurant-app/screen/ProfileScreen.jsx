@@ -1,10 +1,7 @@
-
-
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   Alert,
   FlatList,
@@ -14,13 +11,12 @@ import {
   RefreshControl,
   Modal,
   Switch,
+  StyleSheet
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import * as Notifications from 'expo-notifications';
-
-// const API_BASE_URL = "http://192.168.18.15:3000";
 
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -36,17 +32,18 @@ export default function ProfileScreen({ navigation }) {
     withCredentials: true,
   });
 
+  // Fetch user profile
   const fetchUserProfile = async () => {
     try {
       const response = await api.get('/me');
       if (response.data?.user) {
         setUser(response.data.user);
-        setNotificationsEnabled(response.data.user.notificationsEnabled || false); // Set initial notification state
+        setNotificationsEnabled(response.data.user.notificationsEnabled || false);
         return response.data.user;
       }
       return null;
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      // console.error("Error fetching user profile:", error);
       setUser(null);
       if (error.response?.data?.message) {
         Alert.alert("Authentication Error", error.response.data.message);
@@ -55,6 +52,7 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // Fetch user favorites
   const fetchFavorites = async (userId) => {
     if (!userId) return;
     try {
@@ -66,6 +64,7 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // Fetch user reservations
   const fetchReservations = async (userId) => {
     if (!userId) return;
     try {
@@ -77,7 +76,8 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
-  const loadUserData = async () => {
+  // Load user data
+  const loadUserData = useCallback(async () => {
     try {
       const userData = await fetchUserProfile();
       if (userData?._id) {
@@ -85,6 +85,10 @@ export default function ProfileScreen({ navigation }) {
           fetchFavorites(userData._id),
           fetchReservations(userData._id)
         ]);
+  
+        if (notificationsEnabled) {
+          await scheduleReservationNotifications(reservations);
+        }
       }
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -92,17 +96,19 @@ export default function ProfileScreen({ navigation }) {
       setIsLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [notificationsEnabled]);
 
   useEffect(() => {
     loadUserData();
   }, []);
 
+  // Refresh data
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadUserData();
   }, []);
 
+  // Sign out
   const handleSignOut = async () => {
     try {
       await api.post('/signout');
@@ -110,13 +116,14 @@ export default function ProfileScreen({ navigation }) {
       setFavorites([]);
       setReservations([]);
       Alert.alert("Success", "Signed out successfully");
-      navigation.navigate("SignIn");
+      navigation.navigate("Auth");
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Sign out failed";
       Alert.alert("Sign Out Error", errorMsg);
     }
   };
 
+  // Remove from favorites
   const handleRemoveFromFavorites = async (restaurantId) => {
     if (!user?._id) return;
     try {
@@ -130,6 +137,7 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // Cancel reservation
   const handleCancelReservation = async (reservationId) => {
     if (!user?._id) return;
     Alert.alert(
@@ -165,57 +173,189 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
-  useEffect(() => {
-    const setupNotifications = async () => {
-      try {
+  const configureNotifications = async () => {
+    try {
+      // Set notification handler
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+        }),
+      });
+  
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      
+      if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert('Permission', 'You need to enable notifications');
-        }
-      } catch (error) {
-        console.error("Error setting up notifications:", error);
+        finalStatus = status;
       }
-    };
-
-    setupNotifications();
-  }, []);
-
-  // Handle toggle change
-  const handleToggleNotifications = async (value) => {
-    setNotificationsEnabled(value);
-
-    if (value) {
-      // If notifications are enabled, send a request to the backend to enable email notifications
-      try {
-        await api.post(`${process.env.EXPO_PUBLIC_API_URL}/enable-notifications`, { userId: user._id });
-        Alert.alert("Success", "Notifications enabled. You will receive emails for favorites and reservations.");
-      } catch (error) {
-        console.error("Error enabling notifications:", error);
-        Alert.alert("Error", "Failed to enable notifications.");
+      
+      if (finalStatus !== 'granted') {
+        console.error('Failed to get notification permission');
+        return false;
       }
-    } else {
-      // If notifications are disabled, send a request to the backend to disable email notifications
-      try {
-        await api.post(`${process.env.EXPO_PUBLIC_API_URL}/disable-notifications`, { userId: user._id });
-        Alert.alert("Success", "Notifications disabled.");
-      } catch (error) {
-        console.error("Error disabling notifications:", error);
-        Alert.alert("Error", "Failed to disable notifications.");
-      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error configuring notifications:', error);
+      return false;
     }
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4caf50" />
-      </View>
-    );
-  }
+  // Schedule notifications for reservations
+  
+  const scheduleReservationNotifications = async (reservations) => {
+    try {
+      // First ensures notifications are configured
+      const notificationsConfigured = await configureNotifications();
+      if (!notificationsConfigured) {
+        console.error('Notifications not properly configured');
+        return;
+      }
+  
+      // Cancel existing notifications
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      
+      // Schedule an immediate test notification
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'ThaZulu',
+          body: 'This is a reservation reminder',
+          sound: 'default',
+        },
+        trigger: null, 
+      });
+      
+      for (const reservation of reservations) {
+        const reservationDate = new Date(reservation.date);
+        const now = new Date();
+        
+        console.log('Processing reservation:', {
+          restaurantName: reservation.restaurantId.name,
+          date: reservationDate,
+          time: reservation.time,
+          currentTime: now
+        });
+        
+        if (reservationDate > now) {
+          const [hours, minutes] = reservation.time.split(':').map(num => parseInt(num, 10));
+          
+          // Create notification time (1 hour before reservation)
+          const notificationTime = new Date(reservationDate);
+          notificationTime.setHours(hours - 1);
+          notificationTime.setMinutes(minutes);
+          notificationTime.setSeconds(0);
+          
+          console.log('Attempting to schedule notification for:', {
+            restaurant: reservation.restaurantId.name,
+            notificationTime: notificationTime.toISOString(),
+            timeUntilNotification: (notificationTime - now) / 1000 / 60, // minutes
+            currentTime: now.toISOString()
+          });
+  
+          if (notificationTime > now) {
+            const identifier = await Notifications.scheduleNotificationAsync({
+              content: {
+                title: `Upcoming: ${reservation.restaurantId.name}`,
+                body: `Your reservation is in 1 hour (${reservation.time})`,
+                sound: 'default',
+                data: { reservationId: reservation._id },
+              },
+              trigger: {
+                date: notificationTime,
+              },
+            });
+            
+            console.log('Scheduled notification:', identifier);
+          } else {
+            console.log('Notification time is in the past:', notificationTime);
+          }
+        }
+      }
+      
+      // Verify scheduled notifications
+      const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+      console.log('Verified scheduled notifications:', scheduledNotifications);
+      
+    } catch (error) {
+      console.error('Error in scheduleReservationNotifications:', error);
+    }
+  };
+  // Cancel all scheduled notifications
+  const cancelAllNotifications = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  };
 
+  // Handle toggle change
+  const handleToggleNotifications = async (value) => {
+    try {
+      // Make API call first
+      await api.post(value ? '/enable-notifications' : '/disable-notifications', { userId: user._id });
+      
+      if (value) {
+        // Schedule notifications before updating state
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Notifications Enabled",
+            body: "You will now receive reminders for your reservations.",
+          },
+          trigger: null,
+        });
+        
+        // Schedule for existing reservations
+        await scheduleReservationNotifications(reservations);
+      } else {
+        await cancelAllNotifications();
+      }
+      
+      // Update state after everything is successful
+      setNotificationsEnabled(value);
+      Alert.alert("Success", `Notifications ${value ? "enabled" : "disabled"}.`);
+    } catch (error) {
+      console.error(`Error ${value ? "enabling" : "disabling"} notifications:`, error);
+      Alert.alert("Error", `Failed to ${value ? "enable" : "disable"} notifications.`);
+    }
+  };
+  // Ensure notification permissions
+  useEffect(() => {
+    const setupNotifications = async () => {
+      const notificationsConfigured = await configureNotifications();
+      if (notificationsConfigured) {
+        // Set up notification received handler
+        const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
+          console.log('Notification received:', notification);
+        });
+  
+        // Set up notification response handler
+        const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log('Notification response:', response);
+        });
+  
+        return () => {
+          receivedSubscription.remove();
+          responseSubscription.remove();
+        };
+      }
+    };
+  
+    setupNotifications();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+  
+    return () => subscription.remove();
+  }, []);
+  
+
+  // Render favorite item
   const renderFavoriteItem = ({ item }) => {
     if (!item?.restaurantId) return null;
-    
+
     return (
       <TouchableOpacity>
         <View style={styles.favoriteItem}>
@@ -244,6 +384,7 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  // Render reservation item
   const renderReservationItem = ({ item }) => {
     if (!item?.restaurantId) return null;
 
@@ -265,6 +406,7 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  // Render content
   const renderContent = () => {
     if (!user) {
       return (
@@ -364,14 +506,66 @@ export default function ProfileScreen({ navigation }) {
               <Text style={styles.modalTitle}>Terms of Use</Text>
               <ScrollView style={styles.modalScroll}>
                 <Text style={styles.modalText}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                  Nulla vel urna euismod, tincidunt nisl vel, consectetur 
-                  elit. Sed euismod, nisl vel tincidunt consectetur, 
-                  nisl nisl tincidunt nisl, vel tincidunt nisl nisl vel 
-                  nisl. Nulla vel urna euismod, tincidunt nisl vel, 
-                  consectetur elit. Sed euismod, nisl vel tincidunt 
-                  consectetur, nisl nisl tincidunt nisl, vel tincidunt 
-                  nisl nisl vel nisl.
+                Terms of Use for ThaZulu reservation app
+
+1. Acceptance of Terms
+By accessing and using the ThaZulu app, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use the app.
+
+2. User Accounts
+- You must provide accurate and complete information when creating an account
+- You are responsible for maintaining the confidentiality of your account credentials
+- You must be at least 18 years old to create an account
+- You agree to notify us immediately of any unauthorized use of your account
+
+3. Reservation Policies
+- Reservations are subject to restaurant availability
+- A valid credit card may be required to secure certain reservations
+- You agree to honor your reservations or cancel them at least 24 hours in advance
+- Repeated no-shows may result in account suspension
+- Restaurants reserve the right to enforce their own cancellation policies
+
+4. User Conduct
+- You agree to provide honest and accurate reviews
+- You will not engage in fraudulent booking practices
+- You will treat restaurant staff and other users with respect
+- You will not use the app for any unlawful purpose
+- You will not attempt to manipulate ratings or reviews
+
+5. Privacy and Data Usage
+- We collect and use your data as described in our Privacy Policy
+- Your personal information will be protected according to applicable laws
+- We use cookies and similar technologies to improve user experience
+- You control what information is shared with restaurants
+
+6. Restaurant Information
+- While we strive for accuracy, menu items and prices may vary
+- Restaurant hours and availability are subject to change
+- Photos and descriptions are for reference only
+- We are not responsible for restaurant service quality
+
+7. Modifications and Cancellations
+- You may modify or cancel reservations according to restaurant policies
+- Restaurants may need to cancel reservations in extraordinary circumstances
+- We will notify you of any changes to your reservation
+
+8. Liability Limitations
+- We are not responsible for restaurant service or food quality
+- We do not guarantee restaurant availability
+- Our liability is limited to the amount paid for the booking service
+
+9. Account Termination
+- We reserve the right to suspend or terminate accounts for violations
+- You may delete your account at any time
+- We may retain certain data as required by law
+
+10. Changes to Terms
+- We may update these terms at any time
+- Continued use of the app constitutes acceptance of new terms
+- Users will be notified of significant changes
+
+Last updated: December 20, 2024
+
+By using ThaZulu, you acknowledge that you have read, understood, and agree to these Terms of Use.
                 </Text>
               </ScrollView>
               <TouchableOpacity
