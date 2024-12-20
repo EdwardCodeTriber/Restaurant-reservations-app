@@ -6,19 +6,19 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const nodemailer = require('nodemailer'); // Add Nodemailer
 const Restaurant = require('./models/restaurant');
 const Reservation = require("./models/Reservation");
-const User= require('./users')
-const Favorite= require('./models/Favorites')
+const User = require('./users');
+const Favorite = require('./models/Favorites');
 const Stripe = require("stripe");
-
-// const reservationsRoute = require("./routes/reservations");
-
+require('dotenv').config();
 const app = express();
 const PORT = 3000;
-const stripe = Stripe("sk_test_51PuTr7LOTigiMrGczu7wNOo4HtbCev9JdmhAvD782LAq7Q3IGjZiNNrvFSeMt9Kbmj4hKxTbVbwWFh4QwFSzUClG008sV52fgY"); 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 // MongoDB connection
-mongoose.connect('mongodb+srv://sphllzulu:L5rv9SsjPLBeIqiY@cluster10.6e0kt.mongodb.net/', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['exp://192.168.18.15:8081', 'http://192.168.18.15:3000'], 
+    origin: ['exp://192.168.18.15:8081', 'http://192.168.18.15:3000'],
     credentials: true,
   })
 );
@@ -43,10 +43,59 @@ app.use(
     secret: 'mySecretKey',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: 'mongodb+srv://sphllzulu:L5rv9SsjPLBeIqiY@cluster10.6e0kt.mongodb.net/' }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, 
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
   })
 );
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use your email service (e.g., Gmail, Outlook)
+  auth: {
+    user: process.env.EMAIL_ADD, 
+    pass: process.env.EMAIL_PASS, 
+  },
+});
+
+// Enable notifications endpoint
+app.post('/enable-notifications', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.notificationsEnabled = true;
+    await user.save();
+
+    res.status(200).json({ message: 'Notifications enabled' });
+  } catch (error) {
+    console.error('Error enabling notifications:', error);
+    res.status(500).json({ message: 'Error enabling notifications', error: error.message });
+  }
+});
+
+// Disable notifications endpoint
+app.post('/disable-notifications', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.notificationsEnabled = false;
+    await user.save();
+
+    res.status(200).json({ message: 'Notifications disabled' });
+  } catch (error) {
+    console.error('Error disabling notifications:', error);
+    res.status(500).json({ message: 'Error disabling notifications', error: error.message });
+  }
+});
 
 
 
@@ -220,29 +269,29 @@ app.post('/restaurants/review', async (req, res) => {
   }
 });
 
-app.post("/reservations", async (req, res) => {
+app.post('/reservations', async (req, res) => {
   const { userId, restaurantId, partySize, date, time } = req.body;
 
   // Validate required fields
   if (!userId || !restaurantId || !partySize || !date || !time) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
     // Find the restaurant
     const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
-      return res.status(404).json({ error: "Restaurant not found" });
+      return res.status(404).json({ error: 'Restaurant not found' });
     }
 
     // Convert the date to a JavaScript Date object
     const reservationDate = new Date(date);
     if (isNaN(reservationDate.getTime())) {
-      return res.status(400).json({ error: "Invalid date format" });
+      return res.status(400).json({ error: 'Invalid date format' });
     }
 
     // Get the day of the week (e.g., "Monday", "Tuesday")
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayOfWeek = days[reservationDate.getDay()];
 
     // Find the time slot
@@ -251,12 +300,12 @@ app.post("/reservations", async (req, res) => {
       ?.slots.find((slot) => slot.time === time);
 
     if (!timeSlot) {
-      return res.status(400).json({ error: "Time slot not found" });
+      return res.status(400).json({ error: 'Time slot not found' });
     }
 
     // Check if the time slot has available reservations
     if (timeSlot.currentReservations >= timeSlot.maxReservations) {
-      return res.status(400).json({ error: "No available slots for this time" });
+      return res.status(400).json({ error: 'No available slots for this time' });
     }
 
     // Create the reservation
@@ -275,10 +324,31 @@ app.post("/reservations", async (req, res) => {
     timeSlot.currentReservations += 1;
     await restaurant.save();
 
-    res.status(201).json({ message: "Reservation created successfully", reservation });
+    // Fetch the user
+    const user = await User.findById(userId);
+
+    // Send email if notifications are enabled
+    if (user.notificationsEnabled) {
+      const mailOptions = {
+        from: process.env.EMAIL_ADD,
+        to: user.email,
+        subject: 'New Reservation Created',
+        text: `You have reserved a table at ${restaurant.name} on ${date} at ${time} for ${partySize} people.`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error sending email:', error);
+        } else {
+          console.log('Email sent:', info.response);
+        }
+      });
+    }
+
+    res.status(201).json({ message: 'Reservation created successfully', reservation });
   } catch (error) {
-    console.error("Error creating reservation:", error);
-    res.status(500).json({ error: "Failed to create reservation", details: error.message });
+    console.error('Error creating reservation:', error);
+    res.status(500).json({ error: 'Failed to create reservation', details: error.message });
   }
 });
 
@@ -295,7 +365,7 @@ app.get("/reservations/:userId", async (req, res) => {
   }
 });
 
-// Delete a reservation
+
 
 // Delete a reservation
 app.delete("/reservations/:userId/:reservationId", async (req, res) => {
@@ -334,27 +404,49 @@ app.delete("/reservations/:userId/:reservationId", async (req, res) => {
   }
 });
 
-app.post("/favorites", async (req, res) => {
+app.post('/favorites', async (req, res) => {
   const { userId, restaurantId } = req.body;
 
   try {
     // Check if the favorite already exists
     const existingFavorite = await Favorite.findOne({ userId, restaurantId });
     if (existingFavorite) {
-      return res.status(400).json({ error: "Already in favorites" });
+      return res.status(400).json({ error: 'Already in favorites' });
     }
 
     // Create a new favorite
     const favorite = new Favorite({ userId, restaurantId });
     await favorite.save();
 
-    // Fetch all favorites for the user
-    const favorites = await Favorite.find({ userId });
+    // Fetch the user and restaurant details
+    const user = await User.findById(userId);
+    const restaurant = await Restaurant.findById(restaurantId);
 
-    res.status(201).json({ message: "Added to favorites", favorites });
+    // Send email if notifications are enabled
+    if (user.notificationsEnabled) {
+      const mailOptions = {
+        from: process.env.EMAIL_ADD,
+        to: user.email,
+        subject: 'New Favorite Added',
+        text: `You have added ${restaurant.name} to your favorites.`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error sending email:', error);
+        } else {
+          console.log('Email sent:', info.response);
+        }
+      });
+    }
+
+    // Fetch all favorites for the user
+    const favorites = await Favorite.find({ userId }).populate('restaurantId');
+
+    res.status(201).json({ message: 'Added to favorites', favorites });
   } catch (error) {
-    console.error("Error adding to favorites:", error);
-    res.status(500).json({ error: "Failed to add to favorites" });
+    console.error('Error adding to favorites:', error);
+    res.status(500).json({ error: 'Failed to add to favorites', details: error.message });
   }
 });
 
