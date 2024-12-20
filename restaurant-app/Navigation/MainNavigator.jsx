@@ -1,3 +1,321 @@
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { Ionicons } from "@expo/vector-icons";
+// import BottomNavigation from "./BottomNavigation";
+// import HomeScreen from "../screen/HomeScreen";
+// import MapScreen from "../screen/MapScreen";
+// import FavouritesScreen from "../screen/FavouritesScreen";
+// import ProfileScreen from "../screen/ProfileScreen";
+// import RestaurantScreen from "../screen/RestaurantScreen";
+// import BookingTableScreen from "../screen/BookingScreen";
+// import SignInScreen from "../screens/SignInScreen"
+// import SignUpScreen from "../screens/SignUpScreen"
+
+// const Tab = createBottomTabNavigator();
+
+// export default function MainNavigator() {
+//   return (
+//     <NavigationContainer>
+//       <Tab.Navigator
+//         screenOptions={({ route }) => ({
+//           tabBarIcon: ({ focused, color, size }) => {
+//             let iconName;
+
+//             if (route.name === "Home") {
+//               iconName = focused ? "home" : "home-outline";
+//             } else if (route.name === "Map") {
+//               iconName = focused ? "map" : "map-outline";
+//             } else if (route.name === "Favourites") {
+//               iconName = focused ? "heart" : "heart-outline";
+//             } else if (route.name === "Profile") {
+//               iconName = focused ? "person" : "person-outline";
+//             } else if (route.name === "Restaurant") {
+//               iconName = focused ? "restaurant" : "restaurant-outline";
+//             }
+
+//             return <Ionicons name={iconName} size={size} color={color} />;
+//           },
+//           tabBarActiveTintColor: "green",
+//           tabBarInactiveTintColor: "gray",
+//           // tabBarBackground: "blue",
+//           headerShown: false,
+
+//         })}
+//       >
+//         <Tab.Screen
+//           name="Home"
+//           component={HomeScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Home" />
+//             ),
+//           }}
+//         />
+//         {/* <Tab.Screen
+//           name="Map"
+//           component={MapScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Map" />
+//             ),
+//           }}
+//         /> */}
+//         {/* <Tab.Screen
+//           name="Favorite"
+//           component={FavouritesScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Favourites" />
+//             ),
+//           }}
+//         /> */}
+//         <Tab.Screen
+//           name="Profile"
+//           component={ProfileScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Profile" />
+//             ),
+//           }}
+//         />
+//         {/* <Tab.Screen
+//           name="Restaurant"
+//           component={RestaurantScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Restaurant" />
+//             ),
+//           }}
+//         /> */}
+//         <Tab.Screen
+//           name="Booking"
+//           component={BookingTableScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="Booking" />
+//             ),
+//           }}
+//         />
+//         <Tab.Screen
+//           name="SignIn"
+//           component={SignInScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="SignInScreen"/>
+//             ),
+//           }}
+//         />
+//         <Tab.Screen
+//           name="SignUp"
+//           component={SignUpScreen}
+//           options={{
+//             tabBar: ({ focused }) => (
+//               <BottomNavigation navigation={navigation} currentScreen="SignUpScreen"/>
+//             ),
+//           }}
+//         />
+//       </Tab.Navigator>
+//     </NavigationContainer>
+//   );
+// }
+// import React from "react";
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import { Ionicons } from "@expo/vector-icons";
+
+// // Import Screens
+// import HomeScreen from "../screen/HomeScreen";
+// import MapScreen from "../screen/MapScreen";
+// import FavouritesScreen from "../screen/FavouritesScreen";
+// import ProfileScreen from "../screen/ProfileScreen";
+// import RestaurantScreen from "../screen/RestaurantScreen";
+// import BookingTableScreen from "../screen/BookingScreen";
+// import SignInScreen from "../screens/SignInScreen";
+// import SignUpScreen from "../screens/SignUpScreen";
+
+// // Create Bottom Tab Navigator
+// const Tab = createBottomTabNavigator();
+
+// // Create Stack Navigator for Screens Not in Bottom Tab
+// const Stack = createStackNavigator();
+
+// // Main Stack Navigator for Screens Not in Bottom Tab
+// function MainStackNavigator() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="Home" component={HomeScreen} />
+//       <Stack.Screen name="Map" component={MapScreen} />
+//       <Stack.Screen name="Favourites" component={FavouritesScreen} />
+//       <Stack.Screen name="Profile" component={ProfileScreen} />
+//       <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+//       <Stack.Screen name="BookingTable" component={BookingTableScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// // Authentication Stack Navigator for SignIn and SignUp
+// function AuthStackNavigator() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="SignIn" component={SignInScreen} />
+//       <Stack.Screen name="SignUp" component={SignUpScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// // Main Navigator Component
+// export default function MainNavigator() {
+//   return (
+//     <NavigationContainer>
+//       <Tab.Navigator
+//         screenOptions={({ route }) => ({
+//           tabBarIcon: ({ focused, color, size }) => {
+//             let iconName;
+
+//             if (route.name === "Home") {
+//               iconName = focused ? "home" : "home-outline";
+//             } else if (route.name === "Map") {
+//               iconName = focused ? "map" : "map-outline";
+//             } else if (route.name === "Favourites") {
+//               iconName = focused ? "heart" : "heart-outline";
+//             } else if (route.name === "Profile") {
+//               iconName = focused ? "person" : "person-outline";
+//             } else if (route.name === "Auth") {
+//               iconName = focused ? "log-in" : "log-in-outline";
+//             }
+
+//             return <Ionicons name={iconName} size={size} color={color} />;
+//           },
+//           tabBarActiveTintColor: "#4CAF50", // Green for active tab
+//           tabBarInactiveTintColor: "gray", // Gray for inactive tab
+//           tabBarStyle: {
+//             backgroundColor: "#F5F5F5", // Light background for the tab bar
+//             borderTopWidth: 0, // Remove top border
+//           },
+//           headerShown: false,
+//         })}
+//       >
+//         <Tab.Screen name="Home" component={MainStackNavigator} />
+//         <Tab.Screen name="Auth" component={AuthStackNavigator} />
+//       </Tab.Navigator>
+//     </NavigationContainer>
+//   );
+// }
+
+// import React from "react";
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import { Ionicons } from "@expo/vector-icons";
+
+// // Import Screens
+// import HomeScreen from "../screen/HomeScreen";
+// import MapScreen from "../screen/MapScreen";
+// import FavouritesScreen from "../screen/FavouritesScreen";
+// import ProfileScreen from "../screen/ProfileScreen";
+// import RestaurantScreen from "../screen/RestaurantScreen";
+// import BookingTableScreen from "../screen/BookingScreen";
+// import SignInScreen from "../screens/SignInScreen";
+// import SignUpScreen from "../screens/SignUpScreen";
+
+// // Create Bottom Tab Navigator
+// const Tab = createBottomTabNavigator();
+
+// // Create Stack Navigator for Screens with Top Navigation
+// const Stack = createStackNavigator();
+
+// // Main Stack Navigator for Screens Not in Bottom Tab
+// function MainStackNavigator() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="Home" component={HomeScreen} />
+//       <Stack.Screen name="Map" component={MapScreen} />
+//       <Stack.Screen name="Favourites" component={FavouritesScreen} />
+//       <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+//       <Stack.Screen name="BookingTable" component={BookingTableScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// // Authentication Stack Navigator for SignIn and SignUp
+// function AuthStackNavigator() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="SignIn" component={SignInScreen} />
+//       <Stack.Screen name="SignUp" component={SignUpScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// // Profile Stack Navigator with Top Navigation
+// function ProfileStackNavigator() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="Profile"
+//         component={ProfileScreen}
+//         options={{
+//           headerTitle: "Profile",
+//           headerStyle: {
+//             backgroundColor: "#4CAF50", // Green header background
+//           },
+//           headerTintColor: "#fff", // White text color
+//           headerTitleStyle: {
+//             fontWeight: "bold",
+//           },
+//         }}
+//       />
+//     </Stack.Navigator>
+//   );
+// }
+
+// // Main Navigator Component
+// export default function MainNavigator() {
+//   return (
+//     <NavigationContainer>
+//       <Tab.Navigator
+//         screenOptions={({ route }) => ({
+//           tabBarIcon: ({ focused, color, size }) => {
+//             let iconName;
+
+//             if (route.name === "Home") {
+//               iconName = focused ? "home" : "home-outline";
+//             } else if (route.name === "Map") {
+//               iconName = focused ? "map" : "map-outline";
+//             } else if (route.name === "Favourites") {
+//               iconName = focused ? "heart" : "heart-outline";
+//             } else if (route.name === "Profile") {
+//               iconName = focused ? "person" : "person-outline";
+//             } else if (route.name === "Auth") {
+//               iconName = focused ? "log-in" : "log-in-outline";
+//             }
+
+//             return <Ionicons name={iconName} size={size} color={color} />;
+//           },
+//           tabBarActiveTintColor: "#4CAF50", // Green for active tab
+//           tabBarInactiveTintColor: "gray", // Gray for inactive tab
+//           tabBarStyle: {
+//             backgroundColor: "#F5F5F5", // Light background for the tab bar
+//             borderTopWidth: 0, // Remove top border
+//           },
+//           headerShown: false,
+//         })}
+//       >
+//         <Tab.Screen name="Home" component={MainStackNavigator} />
+//         <Tab.Screen name="Profile" component={ProfileStackNavigator} />
+//         <Tab.Screen name="Auth" component={AuthStackNavigator} />
+//       </Tab.Navigator>
+//     </NavigationContainer>
+//   );
+// }
+
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
+import { Image, View, StyleSheet } from "react-native";
 import HomeScreen from "../screen/HomeScreen";
 import MapScreen from "../screen/MapScreen";
 import FavouritesScreen from "../screen/FavouritesScreen";
