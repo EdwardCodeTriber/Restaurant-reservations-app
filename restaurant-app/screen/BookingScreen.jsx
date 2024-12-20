@@ -108,7 +108,7 @@ const BookingTableScreen = () => {
         Alert.alert(
           "Reservation Confirmed!",
           "Your table has been successfully booked.",
-          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+          [{ text: "OK", onPress: () => navigation.navigate("Home",{ refresh: true }) }]
         );
       }
     } catch (error) {
@@ -150,7 +150,8 @@ const BookingTableScreen = () => {
         time: selectedTimeSlot.time,
         timeSlotIndex: restaurant.availableTimeSlots.findIndex(
           slot => slot.day === selectedDay
-        )
+        ),
+        notificationsEnabled: user.notificationsEnabled
       };
 
       const response = await axios.post(
@@ -160,6 +161,7 @@ const BookingTableScreen = () => {
       );
 
       await handlePayment(response.data.reservationId);
+      navigation.navigate("Home", { refresh: true });
       
     } catch (error) {
       handleError(error, "Reservation Failed");
