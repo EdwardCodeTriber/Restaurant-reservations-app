@@ -13,7 +13,7 @@ export default function App() {
 
   return (
     <StripeProvider
-      publishableKey={process.env.STRIPE_PK} 
+      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK}
       merchantIdentifier="merchant.com.{{ThaLele}}"
     >
       <MainNavigator />
