@@ -12,7 +12,7 @@ const Reservation = require("./models/Reservation");
 const User = require('./users');
 const Favorite = require('./models/Favorites');
 const Stripe = require("stripe");
-require('dotenv').config();
+require('dotenv').config()
 const app = express();
 const PORT = 3000;
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
@@ -333,7 +333,17 @@ app.post('/reservations', async (req, res) => {
         from: process.env.EMAIL_ADD,
         to: user.email,
         subject: 'New Reservation Created',
-        text: `You have reserved a table at ${restaurant.name} on ${date} at ${time} for ${partySize} people.`,
+        html: `
+        <p>Dear ${user.firstName},</p>
+        <p>You have successfully reserved a table at <strong>${restaurant.name}</strong>.</p>
+        <p>Details:</p>
+        <ul>
+            <li>Date: ${date}</li>
+            <li>Time: ${time}</li>
+            <li>Party Size: ${partySize}</li>
+        </ul>
+        <p>Thank you for choosing us!</p>
+    `,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
