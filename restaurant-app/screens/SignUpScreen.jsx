@@ -1,55 +1,6 @@
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-// import axios from 'axios';
-
-// export default function SignUpScreen({ navigation }) {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleSignUp = () => {
-//     axios
-//       .post('http://192.168.18.15:3000/signup', { username, password }, { withCredentials: true })
-//       .then(() => navigation.navigate('SignIn'))
-//       .catch((error) => console.log(error.response.data));
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>Sign Up</Text>
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Username"
-//         value={username}
-//         onChangeText={setUsername}
-//       />
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Password"
-//         secureTextEntry
-//         value={password}
-//         onChangeText={setPassword}
-//       />
-//       <Button title="Sign Up" onPress={handleSignUp} />
-//       <Button title="Sign In" onPress={() => navigation.navigate('SignIn')} />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-//   title: { fontSize: 24, marginBottom: 20 },
-//   input: {
-//     width: '80%',
-//     height: 40,
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     marginBottom: 10,
-//     paddingHorizontal: 10,
-//   },
-// });
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 
 export default function SignUpScreen({ navigation }) {
@@ -59,14 +10,14 @@ export default function SignUpScreen({ navigation }) {
   const [lastName, setLastName] = useState('');
 
   const handleSignUp = () => {
-    // Basic validation
+   
     if (!email || !password || !firstName || !lastName) {
       Alert.alert('Validation Error', 'Please fill in all fields');
       return;
     }
 
     axios
-      .post('http://192.168.18.15:3000/signup', { 
+      .post(`${process.env.EXPO_PUBLIC_API_URL}/signup`, { 
         email, 
         password, 
         firstName, 
@@ -85,6 +36,7 @@ export default function SignUpScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -93,18 +45,21 @@ export default function SignUpScreen({ navigation }) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
+
       <TextInput
         style={styles.input}
         placeholder="First Name"
         value={firstName}
         onChangeText={setFirstName}
       />
+
       <TextInput
         style={styles.input}
         placeholder="Last Name"
         value={lastName}
         onChangeText={setLastName}
       />
+
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -112,40 +67,72 @@ export default function SignUpScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Sign Up" onPress={handleSignUp} />
+
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+
       <View style={styles.signInContainer}>
-        <Text>Already have an account? </Text>
-        <Button 
-          title="Sign In" 
-          onPress={() => navigation.navigate('SignIn')} 
-        />
+        <Text style={styles.signInText}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+          <Text style={styles.signInLink}>Sign In</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    justifyContent: 'center', 
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20 
+    padding: 20,
+    backgroundColor: '#F5F5F5', // Light background color
   },
-  title: { 
-    fontSize: 24, 
-    marginBottom: 20 
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    color: '#333', // Dark text color
   },
   input: {
     width: '100%',
-    height: 40,
-    borderColor: 'gray',
+    height: 50,
+    borderColor: '#ddd', // Light border color
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    borderRadius: 8, // Rounded corners
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff', // White background for input fields
+    fontSize: 16,
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#4CAF50', // Green button color
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff', // White text color
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   signInContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10
-  }
+  },
+  signInText: {
+    fontSize: 16,
+    color: '#555', // Neutral text color
+  },
+  signInLink: {
+    color: '#4CAF50', // Green link color
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline', // Underline for the link
+  },
 });
