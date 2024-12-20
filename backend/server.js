@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['exp://192.168.18.15:8081', 'http://192.168.18.15:3000'],
+    origin: ['exp://192.168.18.15:8081', 'http://192.168.18.15:3000', 'https://restaurant-reservations-app.onrender.com'],
     credentials: true,
   })
 );
