@@ -20,7 +20,7 @@ export default function SignInScreen({ navigation }) {
       )
       .then((response) => {
         Alert.alert('Success', 'Logged in successfully');
-        navigation.navigate('Home');
+        navigation.navigate('MainApp');
       })
       .catch((error) => {
         const errorMsg = error.response?.data?.message || 'Sign in failed';
