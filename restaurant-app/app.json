@@ -18,6 +18,14 @@
         "image": "./assets/Logo.png",
         "resizeMode": "contain",
         "backgroundColor": "#ffffff"
+      },
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow $(ThaZulu) to access your photos",
+        "NSCameraUsageDescription": "Allow $(ThaZulu) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(ThaZulu) to access your microphone",
+        "NSLocationWhenInUseUsageDescription": "Allow $(ThaZulu) to access your location",
+        "NSLocationAlwaysUsageDescription": "Allow $(ThaZulu) to access your location",
+        "UIBackgroundModes": ["fetch", "remote-notification"]
       }
     },
     "android": {
@@ -34,6 +42,18 @@
         "xxxhdpi": "./assets/Logo.png",
         "resizeMode": "contain",
         "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM",
+        "VIBRATE",
+        "NOTIFICATIONS"
+      ],
+      "notification": {
+        "icon": "./assets/Logo.png",
+        "color": "#FFFFFF",
+        "channelId": "default-channel-id",
+        "priority": "max"
       }
     },
     "web": {
