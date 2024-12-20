@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import SplashGif from '../assets/splash.gif';
 
-const SplashScreen = () => {
+const SplashScreen = ({ navigation }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.replace('MainApp'); 
+    }, 2000);
+
+    return () => clearTimeout(timer); 
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
-      <Image source={SplashGif}
-    //    style={styles.gif} 
-       />
+      <Image
+        source={require('../assets/Logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
     </View>
   );
 };
@@ -15,13 +24,13 @@ const SplashScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2ecc71',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#22E4AC',
   },
-  gif: {
-    width: "auto",
-    height: "auto",
+  logo: {
+    width: 200,
+    height: 200,
   },
 });
 
