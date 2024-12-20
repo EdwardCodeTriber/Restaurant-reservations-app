@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   View,
@@ -12,12 +11,14 @@ import {
   Button,
   Alert,
   ScrollView,
+  StatusBar
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LocationMap from "../components/LocationMarker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function HomeScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -353,32 +354,31 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
+    
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.greeting}>
           Hi, {user ? `${user.firstName} ${user.lastName}` : "Guest"}
         </Text>
-        <Text style={styles.date}>{new Date().toLocaleDateString()}</Text>
+        {/* <Text style={styles.date}>{new Date().toLocaleDateString()}</Text> */}
 
         <TextInput
           style={styles.searchInput}
-          placeholder="Search your location here"
+          placeholder="Search for your favorite restaurant"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
 
-        <Text style={styles.heading}>Restaurants nearby</Text>
+        <Text style={styles.heading}>Available Restaurants</Text>
 
         <FlatList
           data={filteredRestaurants}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <RestaurantCard item={item} />}
-          getItemLayout={(data, index) => ({
-            length: 100, // Height of each item
-            offset: 100 * index, // Offset of each item
-            index,
-          })}
-          initialNumToRender={10} // Render only 10 items initially
+          
+          initialNumToRender={10}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
         />
       </View>
 
@@ -676,7 +676,7 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#92e6a7", padding: 20 },
+  container: { flex: 1, backgroundColor: "#136f63", padding: 10 },
   greeting: { fontSize: 24, fontWeight: "bold", color: "#000" },
   date: { fontSize: 14, color: "#fff", marginVertical: 5 },
   searchInput: {
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    opacity:0.8,
+    opacity:0.9,
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
@@ -711,6 +711,10 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginBottom: 10,
+  },
+  
+  listContent: {
+    paddingBottom: 50, 
   },
   input: {
     borderWidth: 1,
