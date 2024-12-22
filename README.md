@@ -1,138 +1,175 @@
-ThaZulu App
+# ThaZulu 🍽️
 
-ThaZulu is a full-stack restaurant reservation application that enables users to discover and book tables at their favorite restaurants. The platform also includes an admin dashboard for managing restaurant details and reservations.
+A modern restaurant reservation platform built with React Native, making it easy for users to discover, book, and review their favorite restaurants.
 
-Features
+## 📱 Features
 
-User Features
+- **Restaurant Discovery**: Browse and search through a curated list of restaurants
+- **Real-time Booking**: Check availability and make instant reservations
+- **Secure Payments**: Integrated Stripe payment processing
+- **User Profiles**: Personalized experience with favorite restaurants and booking history
+- **Reviews & Ratings**: Share your dining experiences
+- **Interactive Maps**: Find restaurants near you
+- **Smart Scheduling**: View available time slots in real-time
 
-Browse Restaurants: View a variety of restaurants with details like name, location, cuisine, and available tables.
+## 🚀 Getting Started
 
-Make Reservations: Select a date, time, and table to book directly through the app.
+### Prerequisites
 
-User Authentication: Register and log in securely using cookie-based authentication.
+- Node.js (v14 or higher)
+- React Native development environment
+- MongoDB
+- Stripe account for payments
+- Expo CLI
 
-Admin Features
+### Installation
 
-Admin Dashboard: Accessible only by admins to manage restaurants and reservations.
+1. Clone the repository:
+```bash
+git clone https://github.com/EdwardCodeTriber/Restaurant-reservations-app.git
+cd restaurant-app
+```
 
-Add/Edit/Delete Restaurants: Manage restaurant profiles, including updating their details and table availability.
-
-Reservation Management: View and manage all reservations.
-
-Tech Stack
-
-Backend
-
-Node.js: Server-side logic.
-
-Express.js: API routing and middleware.
-
-MongoDB: Database for storing user, restaurant, and reservation data.
-
-Session-Based Authentication: Secure user sessions stored in cookies.
-
-Frontend
-
-React Native: Cross-platform mobile development.
-
-Expo: Framework for building and running the app.
-
-Material-UI: Styling for React components.
-
-Installation and Setup
-
-Prerequisites
-
-Node.js
-
-MongoDB (local or cloud instance)
-
-Expo CLI
-
-Environment variables configured for:
-
-Database URL
-
-Session secret
-
-Backend Setup
-
-Clone the repository:
-
-git clone https://github.com/your-username/thazulu.git
-
-Navigate to the backend directory:
-
-cd thazulu/backend
-
-Install dependencies:
-
+2. Install dependencies:
+```bash
 npm install
+```
 
-Set up environment variables in a .env file:
+3. Create a `.env` file in the root directory:
+```
+EXPO_PUBLIC_API_URL=your_api_url
+STRIPE_PUBLIC_KEY=your_stripe_public_key
+```
 
-DATABASE_URL=your_mongo_connection_string
-SESSION_SECRET=your_session_secret
+4. Start the development server:
+```bash
+npx expo start
+```
 
-Start the server:
+## 🏗️ Frontend Project Structure
 
-npm start
+```
+Restaurant-reservations-app/
+├── restaurant-app/
+│   ├── components/
+│   │   └── LocationMarker.js
+│   ├── screens/
+│   │   ├── HomeScreen.js
+│   │   └── BookingScreen.js
+│   │   └── ProfileScreen.js
 
-Frontend Setup
 
-Navigate to the frontend directory:
+│   ├── utils/
+│   └── config/
+├── assets/
+└── App.js
+```
 
-cd thazulu/frontend
+## 💻 Tech Stack
 
-Install dependencies:
+- **Frontend**: React Native
+- **Backend**: Node.js
+- **Database**: MongoDB
+- **Payment**: Stripe
+- **Maps**: React Native Maps
+- **HTTP Client**: Axios
+- **State Management**: React Hooks
 
-npm install
+## 🔑 Key Features Implementation
 
-Start the Expo development server:
+### Restaurant Booking Flow
+1. Browse available restaurants
+2. Select date and party size
+3. Choose from available time slots
+4. Enter payment details
+5. Receive booking confirmation
 
-npm start
+### User Features
+- Save favorite restaurants
+- View booking history
+- Write and read reviews
+- Manage profile settings
 
-Use the Expo Go app on your phone to preview the application.
+## 📝 Environment Variables
 
-API Endpoints
+Required environment variables:
+```
+EXPO_PUBLIC_API_URL=your_api_url
+STRIPE_PUBLIC_KEY=your_stripe_public_key
+MONGODB_URI=your_mongodb_uri
+```
 
-Authentication
+## 🛠️ Development
 
-POST /api/auth/register: User registration.
+### Running Tests
+```bash
+npm test
+```
 
-POST /api/auth/login: User login with cookie-based session.
+### Building for Production
+```bash
+expo build:android
+# or
+expo build:ios
+```
 
-POST /api/auth/logout: User logout.
+## 🐛 Known Issues
 
-Restaurants
+- Party size selection limited to predefined values
+- Restaurant images require specific format and size
+- Payment processing may have delays during high traffic
 
-GET /api/restaurants: Retrieve all restaurants.
+## 🔮 Future Enhancements
 
-GET /api/restaurants/:id: Retrieve a single restaurant by ID.
+- [ ] Implement push notifications for booking reminders
+- [ ] Add loyalty program features
+- [ ] Enable social sharing of restaurant experiences
+- [ ] Add multi-language support
+- [ ] Implement advanced search filters
 
-POST /api/restaurants: Add a new restaurant (Admin only).
+## 📄 API Documentation
 
-PUT /api/restaurants/:id: Update a restaurant’s details (Admin only).
+Key endpoints:
 
-DELETE /api/restaurants/:id: Delete a restaurant (Admin only).
+```javascript
+GET /restaurants          // Fetch all restaurants
+POST /reservations       // Create new reservation
+GET /me                  // Fetch user profile
+POST /favorites         // Add restaurant to favorites
+```
 
-Reservations
+Full API documentation available in the `docs` folder.
 
-POST /api/reservations: Make a new reservation.
+## 🔒 Security
 
-GET /api/reservations: Retrieve all reservations (Admin only).
+- User authentication via cookie-based authentication
+- Secure payment processing with Stripe
+- Data encryption for sensitive information
+- Input validation and sanitization
 
-DELETE /api/reservations/:id: Cancel a reservation.
+## 📱 Supported Platforms
 
-Contributing
+- iOS 11.0 or later
+- Android 5.0 (API 21) or later
 
-Fork the repository.
+## 👏 Acknowledgments
 
-Create a new branch for your feature:
+- Restaurant icons from [FontAwesome](https://fontawesome.com)
+- Map integration powered by [React Native Maps](https://github.com/react-native-maps/react-native-maps)
+- Payment processing by [Stripe](https://stripe.com)
 
-git checkout -b feature-name
+## 🔄 Version History
 
-Commit your changes and push to your fork.
+- 1.0.0
+  - Initial Release
+  - Basic booking functionality
+- 1.1.0
+  - Added reviews system
+  - Improved payment flow
 
-Submit a pull request.
+## 👥 Team
+
+- Co-developers - [Thapelo Somo, Siphelele Zulu]
+- UI/UX Designer - [Thapelo Somo]
+- Backend Developer - [Siphelele Zulu, Thapelo Somo]
+
