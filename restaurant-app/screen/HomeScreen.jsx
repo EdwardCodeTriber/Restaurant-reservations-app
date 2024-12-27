@@ -318,7 +318,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.card}>
         <Image
           source={{
-            uri: `${process.env.EXPO_PUBLIC_API_URL}/${item.images[0]}`,
+            uri: item.images[0]
           }}
           style={styles.image}
         />
@@ -407,7 +407,7 @@ export default function HomeScreen({ navigation }) {
                     data={selectedRestaurant.images}
                     renderItem={({ item }) => (
                       <Image
-                        source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/${item}` }}
+                        source={{ uri: item  }}
                         style={styles.modalImage}
                       />
                     )}
