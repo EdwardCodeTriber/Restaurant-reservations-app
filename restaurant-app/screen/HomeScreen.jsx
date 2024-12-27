@@ -316,12 +316,14 @@ export default function HomeScreen({ navigation }) {
       }}
     >
       <View style={styles.card}>
+      {item.menu && item.menu.length > 0 && (
         <Image
           source={{
-            uri: item.images[0]
+            uri: item.menu[0].image
           }}
           style={styles.image}
         />
+      )}
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
           <Text>⭐ {item.rating}</Text>
@@ -533,8 +535,8 @@ export default function HomeScreen({ navigation }) {
                       {selectedRestaurant.description}
                     </Text>
                     <LocationMap
-                      latitude={selectedRestaurant.latitude}
-                      longitude={selectedRestaurant.longitude}
+                      latitude={selectedRestaurant.location.latitude}
+                      longitude={selectedRestaurant.location.longitude}
                       style={styles.modalMap}
                     />
                   </View>
