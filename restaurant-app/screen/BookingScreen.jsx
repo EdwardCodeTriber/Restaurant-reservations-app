@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
@@ -29,6 +30,9 @@ const BookingTableScreen = () => {
   const [user, setUser] = useState(null);
   const [recentDates, setRecentDates] = useState([]);
   const [paymentError, setPaymentError] = useState(null);
+  const [customerName, setCustomerName] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("Pending"); // Default status
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -37,6 +41,8 @@ const BookingTableScreen = () => {
           withCredentials: true,
         });
         setUser(response.data.user);
+        setCustomerName(response.data.user.name); // Pre-fill customer name
+        setEmailAddress(response.data.user.email); // Pre-fill email address
       } catch (error) {
         handleError(error, "Error fetching user profile");
         navigation.goBack();
@@ -90,7 +96,7 @@ const BookingTableScreen = () => {
         `${process.env.EXPO_PUBLIC_API_URL}/create-payment-intent`,
         {
           amount: restaurant.pricePerReservation * 100,
-          currency:'zar',
+          currency: 'zar',
         }
       );
 
@@ -105,10 +111,11 @@ const BookingTableScreen = () => {
       }
 
       if (paymentIntent.status === 'Succeeded') {
+        setPaymentStatus("Confirmed"); // Update payment status
         Alert.alert(
           "Reservation Confirmed!",
           "Your table has been successfully booked.",
-          [{ text: "OK", onPress: () => navigation.navigate("Home",{ refresh: true }) }]
+          [{ text: "OK", onPress: () => navigation.navigate("Home", { refresh: true }) }]
         );
       }
     } catch (error) {
@@ -124,6 +131,8 @@ const BookingTableScreen = () => {
       if (!user?._id) throw new Error("Please log in to make a reservation");
       if (!selectedDate) throw new Error("Please select a date");
       if (!selectedTimeSlot) throw new Error("Please select a time slot");
+      if (!customerName) throw new Error("Please enter your name");
+      if (!emailAddress) throw new Error("Please enter your email address");
 
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       const selectedDay = days[selectedDate.getDay()];
@@ -151,7 +160,10 @@ const BookingTableScreen = () => {
         timeSlotIndex: restaurant.availableTimeSlots.findIndex(
           slot => slot.day === selectedDay
         ),
-        notificationsEnabled: user.notificationsEnabled
+        notificationsEnabled: user.notificationsEnabled,
+        customerName,
+        emailAddress,
+        paymentStatus, // Include payment status
       };
 
       const response = await axios.post(
@@ -182,6 +194,29 @@ const BookingTableScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Book a Table at {restaurant.name}</Text>
+
+        {/* Customer Name Field */}
+        <View style={styles.section}>
+          <Text style={styles.label}>Your Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your name"
+            value={customerName}
+            onChangeText={setCustomerName}
+          />
+        </View>
+
+        {/* Email Address Field */}
+        <View style={styles.section}>
+          <Text style={styles.label}>Your Email Address</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email address"
+            value={emailAddress}
+            onChangeText={setEmailAddress}
+            keyboardType="email-address"
+          />
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.label}>Select Party Size</Text>
@@ -299,11 +334,11 @@ const BookingTableScreen = () => {
         <TouchableOpacity
           style={[
             styles.proceedButton,
-            (!selectedDate || !selectedTimeSlot || isProcessing) && 
+            (!selectedDate || !selectedTimeSlot || isProcessing || !customerName || !emailAddress) && 
             styles.disabledButton
           ]}
           onPress={handleProceedReservation}
-          disabled={!selectedDate || !selectedTimeSlot || isProcessing}
+          disabled={!selectedDate || !selectedTimeSlot || isProcessing || !customerName || !emailAddress}
         >
           {isProcessing ? (
             <ActivityIndicator color="#ffffff" />
@@ -341,6 +376,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#1a1a1a",
     marginBottom: 12,
+  },
+  input: {
+    backgroundColor: "#f5f5f5",
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
   },
   partySizeContainer: {
     flexDirection: "row",

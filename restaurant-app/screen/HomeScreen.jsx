@@ -11,14 +11,13 @@ import {
   Button,
   Alert,
   ScrollView,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LocationMap from "../components/LocationMarker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 export default function HomeScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -40,13 +39,15 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/me`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${process.env.EXPO_PUBLIC_API_URL}/me`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(response.data.user);
       } catch (error) {
         setUser(null);
-        // console.error("Error fetching user profile:", error);
       } finally {
         setIsLoading(false);
       }
@@ -114,8 +115,12 @@ export default function HomeScreen({ navigation }) {
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter(
       (restaurant) =>
-        restaurant.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-        restaurant.address.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+        restaurant.name
+          .toLowerCase()
+          .includes(debouncedSearchQuery.toLowerCase()) ||
+        restaurant.address
+          .toLowerCase()
+          .includes(debouncedSearchQuery.toLowerCase())
     );
   }, [restaurants, debouncedSearchQuery]);
 
@@ -233,7 +238,7 @@ export default function HomeScreen({ navigation }) {
       Alert.alert("Authentication Required", "Please log in to add favorites.");
       return;
     }
-  
+
     try {
       const response = await axios.post(
         `${process.env.EXPO_PUBLIC_API_URL}/favorites`,
@@ -243,17 +248,14 @@ export default function HomeScreen({ navigation }) {
         },
         { withCredentials: true }
       );
-  
+
       // Immediately update favorites state
       const updatedFavorites = response.data.favorites;
       setFavorites(updatedFavorites);
-      
+
       // Persist to AsyncStorage
-      await AsyncStorage.setItem(
-        "favorites",
-        JSON.stringify(updatedFavorites)
-      );
-      
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+
       Alert.alert("Success", "Added to favorites!");
     } catch (error) {
       Alert.alert("Error", "Restaurant has already been added to favorites");
@@ -264,7 +266,7 @@ export default function HomeScreen({ navigation }) {
       }
     }
   };
-  
+
   const handleRemoveFromFavorites = async (restaurantId) => {
     if (!user) {
       Alert.alert(
@@ -273,23 +275,20 @@ export default function HomeScreen({ navigation }) {
       );
       return;
     }
-  
+
     try {
       const response = await axios.delete(
         `${process.env.EXPO_PUBLIC_API_URL}/favorites/${user._id}/${restaurantId}`,
         { withCredentials: true }
       );
-  
+
       // Immediately update favorites state
       const updatedFavorites = response.data.favorites;
       setFavorites(updatedFavorites);
-      
+
       // Persist to AsyncStorage
-      await AsyncStorage.setItem(
-        "favorites",
-        JSON.stringify(updatedFavorites)
-      );
-      
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+
       Alert.alert("Success", "Removed from favorites!");
     } catch (error) {
       Alert.alert("Error", "Failed to remove from favorites.");
@@ -316,14 +315,9 @@ export default function HomeScreen({ navigation }) {
       }}
     >
       <View style={styles.card}>
-      {item.menu && item.menu.length > 0 && (
-        <Image
-          source={{
-            uri: item.menu[0].image
-          }}
-          style={styles.image}
-        />
-      )}
+        {item.photos && item.photos.length > 0 && (
+          <Image source={{ uri: item.photos[0] }} style={styles.image} />
+        )}
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
           <Text>⭐ {item.rating}</Text>
@@ -356,7 +350,6 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
-    
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.greeting}>
@@ -377,7 +370,6 @@ export default function HomeScreen({ navigation }) {
           data={filteredRestaurants}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <RestaurantCard item={item} />}
-          
           initialNumToRender={10}
           style={styles.list}
           contentContainerStyle={styles.listContent}
@@ -402,16 +394,13 @@ export default function HomeScreen({ navigation }) {
 
               <Text style={styles.modalTitle}>{selectedRestaurant.name}</Text>
 
-              {selectedRestaurant.images &&
-                selectedRestaurant.images.length > 0 && (
+              {selectedRestaurant.photos &&
+                selectedRestaurant.photos.length > 0 && (
                   <FlatList
                     horizontal
-                    data={selectedRestaurant.images}
+                    data={selectedRestaurant.photos}
                     renderItem={({ item }) => (
-                      <Image
-                        source={{ uri: item  }}
-                        style={styles.modalImage}
-                      />
+                      <Image source={{ uri: item }} style={styles.modalImage} />
                     )}
                     keyExtractor={(item, index) => index.toString()}
                   />
@@ -472,28 +461,33 @@ export default function HomeScreen({ navigation }) {
                 <View>
                   <Text style={styles.menuTitle}>Top Dishes:</Text>
                   <FlatList
-  data={selectedRestaurant.menu || []}
-  renderItem={({ item }) => (
-    <View style={styles.menuItemContainer}>
-      <Text style={styles.menuItemName}>{item.name}</Text>
-      {item.image && (
-        <Image
-          source={{ 
-            uri: item.image.startsWith('http') 
-              ? item.image 
-              : `${process.env.EXPO_PUBLIC_API_URL}/${item.image.replace(/\\/g, '/')}`
-          }}
-          style={styles.menuItemImage}
-          onError={(e) => {
-            console.error('Image load error:', e.nativeEvent.error);
-            console.log('Problematic image URL:', item.image);
-          }}
-        />
-      )}
-    </View>
-  )}
-  keyExtractor={(item, index) => index.toString()}
-/>
+                    data={selectedRestaurant.menu || []}
+                    renderItem={({ item }) => (
+                      <View style={styles.menuItemContainer}>
+                        <Text style={styles.menuItemName}>{item.name}</Text>
+                        {item.image && (
+                          <Image
+                            source={{
+                              uri: item.image.startsWith("http")
+                                ? item.image
+                                : `${
+                                    process.env.EXPO_PUBLIC_API_URL
+                                  }/${item.image.replace(/\\/g, "/")}`,
+                            }}
+                            style={styles.menuItemImage}
+                            onError={(e) => {
+                              console.error(
+                                "Image load error:",
+                                e.nativeEvent.error
+                              );
+                              console.log("Problematic image URL:", item.image);
+                            }}
+                          />
+                        )}
+                      </View>
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
                 </View>
               )}
 
@@ -692,7 +686,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    opacity:0.9,
+    opacity: 0.9,
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
@@ -714,9 +708,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  
+
   listContent: {
-    paddingBottom: 50, 
+    paddingBottom: 50,
   },
   input: {
     borderWidth: 1,

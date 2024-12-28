@@ -53,7 +53,7 @@ const RestaurantSchema = new mongoose.Schema({
       comment: { type: String, required: true },
     },
   ],
-  images: {
+  photos: {
     type: [String],
   },
   description: {
@@ -124,4 +124,5 @@ const RestaurantSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Restaurant', RestaurantSchema);
+module.exports= mongoose.model('Restaurant', RestaurantSchema);
+

@@ -362,9 +362,8 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.favoriteContent}>
             <Image
               source={{ 
-                uri: item.restaurantId.images?.[0] 
-                  ? `${process.env.EXPO_PUBLIC_API_URL}/${item.restaurantId.images[0]}`
-                  : `${process.env.EXPO_PUBLIC_API_URL}/default-restaurant.jpg`
+                uri: item.restaurantId.photos?.[0] 
+                  
               }}
               style={styles.favoriteImage}
             />
@@ -396,6 +395,8 @@ export default function ProfileScreen({ navigation }) {
         </Text>
         <Text style={styles.reservationTime}>Party Size: {item.partySize}</Text>
         <Text style={styles.reservationTime}>Time: {item.time}</Text>
+        <Text style={styles.reservationTime}>Email: {item.emailAddress}</Text>
+        <Text style={styles.reservationTime}>Status: {item.paymentStatus}</Text>
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => handleCancelReservation(item._id)}

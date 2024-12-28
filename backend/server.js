@@ -269,11 +269,12 @@ app.post('/restaurants/review', async (req, res) => {
   }
 });
 
+
 app.post('/reservations', async (req, res) => {
-  const { userId, restaurantId, partySize, date, time } = req.body;
+  const { userId, restaurantId, partySize, date, time, customerName, emailAddress } = req.body;
 
   // Validate required fields
-  if (!userId || !restaurantId || !partySize || !date || !time) {
+  if (!userId || !restaurantId || !partySize || !date || !time || !customerName || !emailAddress) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -315,6 +316,9 @@ app.post('/reservations', async (req, res) => {
       partySize,
       date: reservationDate,
       time,
+      customerName,
+      emailAddress,
+      paymentStatus: "Pending", 
     });
 
     // Save the reservation
@@ -491,12 +495,11 @@ app.get("/favorites/:userId", async (req, res) => {
   }
 });
 
-
 app.post("/create-payment-intent", async (req, res) => {
   console.log("Received request to create payment intent");
   console.log("Request body:", req.body);
 
-  const { amount, currency } = req.body;
+  const { amount, currency, reservationId } = req.body;
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -506,6 +509,10 @@ app.post("/create-payment-intent", async (req, res) => {
     });
 
     console.log("Payment intent created:", paymentIntent.id);
+
+    // Update the reservation status to "Confirmed"
+    await Reservation.findByIdAndUpdate(reservationId, { paymentStatus: "Confirmed" });
+
     res.send({
       clientSecret: paymentIntent.client_secret,
     });

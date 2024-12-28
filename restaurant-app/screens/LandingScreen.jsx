@@ -1,35 +1,4 @@
-// import React, { useEffect, useState } from 'react';
-// import { View, Text, Button, StyleSheet } from 'react-native';
-// import axios from 'axios';
 
-// export default function LandingScreen({ navigation }) {
-//   const [user, setUser] = useState(null);
-
-//   useEffect(() => {
-//     // Check if user is authenticated
-//     axios
-//       .get('http://192.168.18.15:3000/me', { withCredentials: true })
-//       .then((response) => setUser(response.data.user))
-//       .catch(() => setUser(null));
-//   }, []);
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.text}>
-//         {user ? `Hello, ${user.username}!` : 'Hello Guest!'}
-//       </Text>
-//       <Button
-//         title="Profile"
-//         onPress={() => navigation.navigate(user ? 'Landing' : 'SignIn')}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-//   text: { fontSize: 20, marginBottom: 20 },
-// });
 
 
 import React, { useEffect, useState } from 'react';
