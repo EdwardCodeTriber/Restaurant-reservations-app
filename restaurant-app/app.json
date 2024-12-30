@@ -25,7 +25,12 @@
         "NSMicrophoneUsageDescription": "Allow $(ThaZulu) to access your microphone",
         "NSLocationWhenInUseUsageDescription": "Allow $(ThaZulu) to access your location",
         "NSLocationAlwaysUsageDescription": "Allow $(ThaZulu) to access your location",
-        "UIBackgroundModes": ["fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification",
+          "fetch",
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -47,6 +52,10 @@
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM",
         "VIBRATE",
+        "NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM",
+        "VIBRATE",
         "NOTIFICATIONS"
       ],
       "notification": {
@@ -54,10 +63,22 @@
         "color": "#FFFFFF",
         "channelId": "default-channel-id",
         "priority": "max"
-      }
+      },
+      "package": "com.sphllzulu.restaurantapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b508d7bf-f12c-482f-98b6-fe2f84683234"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b508d7bf-f12c-482f-98b6-fe2f84683234"
     }
   }
 }

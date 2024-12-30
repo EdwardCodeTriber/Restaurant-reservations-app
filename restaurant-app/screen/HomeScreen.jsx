@@ -352,9 +352,11 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.greeting}>
-          Hi, {user ? `${user.firstName} ${user.lastName}` : "Guest"}
-        </Text>
+      <Text style={styles.greeting}>
+  Hi, {user ? `${user.firstName} ${user.lastName}` : "Guest"}
+  {!user && " - Please log in to reserve a table"}
+</Text>
+
         {/* <Text style={styles.date}>{new Date().toLocaleDateString()}</Text> */}
 
         <TextInput

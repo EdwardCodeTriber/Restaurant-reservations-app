@@ -41,10 +41,10 @@ const BookingTableScreen = () => {
           withCredentials: true,
         });
         setUser(response.data.user);
-        setCustomerName(response.data.user.name); // Pre-fill customer name
-        setEmailAddress(response.data.user.email); // Pre-fill email address
+        setCustomerName(response.data.user.name); 
+        setEmailAddress(response.data.user.email); 
       } catch (error) {
-        handleError(error, "Error fetching user profile");
+        // handleError(error, "Error fetching user profile");
         navigation.goBack();
       }
     };
