@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    marginTop: -50, // Adjust this value to move the entire content up or down
+    marginTop: -50,
   },
   logoContainer: {
     alignItems: 'center',
