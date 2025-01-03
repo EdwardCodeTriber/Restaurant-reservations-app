@@ -172,4 +172,8 @@ Full API documentation available in the `docs` folder.
 - Co-developers - [Thapelo Somo, Siphelele Zulu]
 - UI/UX Designer - [Thapelo Somo]
 - Backend Developer - [Siphelele Zulu, Thapelo Somo]
+- 
+## Documentation
+- User guide: https://docs.google.com/document/d/106QBC0LKhFb0bqJDGuLp1ge4R0c2MYMw1Rb6aCOfegg/edit?usp=sharing
+- 
 
