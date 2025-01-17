@@ -157,21 +157,16 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  const StarRating = React.memo(({ rating, onRatingChange }) => {
-    const handleStarPress = (selectedRating) => {
-      onRatingChange(selectedRating);
-    };
-
+  const StarRating = React.memo(({ rating }) => {
     return (
       <View style={styles.starContainer}>
         {[1, 2, 3, 4, 5].map((star) => (
-          <TouchableOpacity key={star} onPress={() => handleStarPress(star)}>
-            <Ionicons
-              name={star <= rating ? "star" : "star-outline"}
-              size={20}
-              color={star <= rating ? "#FFD700" : "#CCCCCC"}
-            />
-          </TouchableOpacity>
+          <Ionicons
+            key={star}
+            name={star <= rating ? "star" : "star-outline"}
+            size={20}
+            color={star <= rating ? "#FFD700" : "#CCCCCC"}
+          />
         ))}
       </View>
     );
