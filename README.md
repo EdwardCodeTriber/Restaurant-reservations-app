@@ -12,6 +12,12 @@ A modern restaurant reservation platform built with React Native, making it easy
 - **Interactive Maps**: Find restaurants near you
 - **Smart Scheduling**: View available time slots in real-time
 
+## Screenshots
+![Image](https://github.com/user-attachments/assets/19d8b59c-2e92-4af5-a1ad-09c10e2bf396)
+![Image](https://github.com/user-attachments/assets/432a72be-7450-4ea8-9ba9-0a4a8ff92f29)
+![Image](https://github.com/user-attachments/assets/4b47b27d-c5d4-4a84-bca2-ceefd806ba5e)
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -172,7 +178,10 @@ Full API documentation available in the `docs` folder.
 - Co-developers - [Thapelo Somo, Siphelele Zulu]
 - UI/UX Designer - [Thapelo Somo]
 - Backend Developer - [Siphelele Zulu, Thapelo Somo]
-- 
+
+## Download APK
+https://drive.google.com/file/d/1TpnQ9hN7XDzc2OKGm1oMnRdu2OSdmOWz/view?usp=drivesdk
+ 
 ## Documentation
 - User guide: https://docs.google.com/document/d/106QBC0LKhFb0bqJDGuLp1ge4R0c2MYMw1Rb6aCOfegg/edit?usp=sharing
 - Dev Docs: https://docs.google.com/document/d/1eSqUvb6mCjN4iM3MRObD31G21DYFGkESjZNVQt3zqM4/edit?usp=sharing
